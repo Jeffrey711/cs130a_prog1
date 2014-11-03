@@ -1,0 +1,11 @@
+prog1: main.o prog1.o
+	g++ -g main.cpp prog1.cpp -o prog1
+
+main.o: main.cpp prog1.h
+	g++ main.cpp -c
+
+prog1.o: prog1.cpp prog1.h
+	g++ prog1.cpp -c
+
+clean:
+	rm prog main.o prog.o
