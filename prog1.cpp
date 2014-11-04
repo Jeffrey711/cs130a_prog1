@@ -1,9 +1,8 @@
-//
-//  prog1.cpp
-//  
-//
-//  Created by Jeffrey Chen on 11/1/14.
-//
-//
-
 #include "prog1.h"
+#include <iostream>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+
+int insert

@@ -24,121 +24,243 @@ class Node {
     }
     
     int isDeleted() {
-        cout << "Is it deleted?" << endl;
+        //cout << "Is it deleted?" << endl;
         if(dlt == 1) {
-            cout << "Yes." << endl;
+            //cout << "Yes." << endl;
             return 1;
         }
         else {
-            cout << "No." << endl;
+            //cout << "No." << endl;
             return 0;
         }
     }
-    
-    int setDelete() {
-        cout << "Marked as deleted." << endl;
-        return dlt;
+    void setDelete(bool d) {
+        //cout << "Marked as deleted." << endl;
+        dlt = d;
     }
-
     void setData(int d) {
-        cout << "Setting data..." << endl;
+        //cout << "Setting data..." << endl;
         data = d;
+        //cout << "data set" << endl;
     }
-
     int getData() const {
-        cout << "Getting data..." << endl;
+        //cout << "Getting data..." << endl;
         return data;
     }
 };
 
 //----------------
 
-class LinkedList {
-private:
+class HashTable {
+  private:
     Node **table;
-    int tableSize;
+    int size;
     
-public:
-    LinkedList(int tableSize) {
-        this->tableSize = tableSize;
-        table = new Node*[tableSize];
-        for (int i=0; i<tableSize; i++)
+  public:
+    HashTable(int size) {
+        this->size = size;
+        table = new Node*[size];
+        for (int i=0; i<size; i++)
             table[i] = NULL;
     }
     
-    int insert(int d) {
-        if (this->lookup(d) == 1) {
-            cout << d << " already present" << endl;
-            return 0;
+    int insert(int d) { //table
+        int index =0;
+        if (d < 0) {
+            int pos = d * -1;
+            index = (pos % size);
         }
         else {
-            int index = (d % tableSize);
-            int initIndex = index;
-            cout << "index = " << index << endl;
-        
-            do {
-                cout << "Entered insert while loop." << endl;
-                if (table[index] == NULL) {
-                    table[index]->setData(d);
-                    cout << d << " inserted" << endl;
-                }
-                
-                if (table[index]->getData() == d && table[index]->isDeleted() == 1) {
-                    table[index]->setData(d);
-                    cout << d << " inserted" << endl;
-                    return 1;
-                }
-                else if (initIndex != index)
-                    index = (index + 1) % tableSize;
-            } while (initIndex != index);
-        return 0;
+            index = (d % size);
         }
+        int initIndex = index;
+        //cout << "Insert into index = " << index << endl;
+    
+        do {
+            //cout << "Entered insert while loop." << endl;
+            if (table[index] == NULL) {
+                table[index] = new Node(d);
+                cout << d << " inserted" << endl;
+                return 1;
+            }
+            
+            else if (table[index]->getData() == d && table[index]->isDeleted() == 0) {
+                table[index]->setDelete(0);
+                cout << d << " already present" << endl;
+                return 1;
+            }
+            else if (table[index]->getData() == d && table[index]->isDeleted() == 1) {
+                table[index]->setDelete(0);
+                cout << d << " inserted" << endl;
+                return 1;
+            }
+            else
+                index = (index + 1) % size;
+                
+        } while (initIndex != index);
+        cout << "Error: Could not insert " << d << endl;
+        return 0;
     }
     
-    int lookup(int d) const {
-        cout << "Looking up..." << endl;
-        int index = (d % tableSize);
+    int lookup(int d) const { //
+        //cout << "Looking up..." << endl;
+        int index = (d % size);
         int initIndex = index;
-        cout << "Index = " << index << endl;
-        if (table[index] == NULL) {
-            return 0;
-        }
+        //cout << "Looking in index = " << index << endl;
+        
         
         do {
-            cout << "In lookup do-while loop." << endl;
-            if(table[index]->getData() == d && table[index]->isDeleted() == 0) {
+            //cout << "In lookup do-while loop." << endl;
+            if (table[index] == NULL) {
+                cout << d << " not found" << endl;
+                return 0;
+            }
+            else if(table[index]->getData() == d && table[index]->isDeleted() == 0) {
                 cout << d << " found" << endl;
                 return 1;
             }
             else {
-                cout << "Rehashing..." << endl;
-                index = (index + 1) % tableSize;
+                //cout << "Rehashing..." << endl;
+                index = (index + 1) % size;
             }
         } while (table[index] != NULL && index != initIndex);
         cout << d << " not found" << endl;
         return 0;
     }
     
-    int deleteMin() {
-        return 0;
+    void deleteMin() { //heap
+        cout << "Minimum key " << "i" << " deleted" << endl;
     }
     
-    int deleteKey(int d) {
-        for(int i=0; i<tableSize; i++) {
-            if(table[i]->getData() == d) {
-                table[i]->setDelete();
+    int deleteKey(int d) { //table
+        int index = (d % size);
+        int initIndex = index;
+        //cout << "Looking in index = " << index << endl;
+        if (table[index] == NULL) {
+            cout << d << " not found" << endl;
+            return 0;
+        }
+        
+        do {
+            //cout << "In lookup do-while loop." << endl;
+            if(table[index]->getData() == d && table[index]->isDeleted() == 0) {
+                table[index]->setDelete(1);
+                cout << d << " deleted" << endl;
                 return 1;
             }
-        }
+            else {
+                //cout << "Rehashing..." << endl;
+                index = (index + 1) % size;
+            }
+        } while (table[index] != NULL && index != initIndex);
+        cout << d << " not found" << endl;
         return 0;
     }
     
     void print() const {
-        for (int i=0; i<tableSize; i++) {
-            cout << table[i] << " ";
+        for (int i=0; i<size; i++) {
+            if (table[i] != NULL && table[i]->isDeleted() == 0) {
+                cout << table[i]->getData() << " ";
+            }
         }
         cout << endl;
     }
 };
 
+//--------------------
+/*
+class MinHeap {
+private:
+    Node **heap;
+    int Size;
+    
+public:
+    MinHeap(int size) {
+        this->size = size;
+        heap = new Node*[size];
+        for (int i=0; i<size; i++) {
+            heap[i] = NULL;
+        }
+    }
+    
+    int insert(int d) {
+        if (heap[size])
+        for (int i=0; i<size; i++) {
+            if (heap[i] == NULL) {
+                heap[i] = new Node(d);
+                cout << d << " inserted" << endl;
+                return 1;
+            }
+            
+        }
+        cout << "Error: Could not insert " << d << endl;
+        return 0;
+    }
+    
+    int lookup(int d) const { //
+        //cout << "Looking up..." << endl;
+        int index = (d % size);
+        int initIndex = index;
+        //cout << "Looking in index = " << index << endl;
+        
+        
+        do {
+            //cout << "In lookup do-while loop." << endl;
+            if (table[index] == NULL) {
+                cout << d << " not found" << endl;
+                return 0;
+            }
+            else if(table[index]->getData() == d && table[index]->isDeleted() == 0) {
+                cout << d << " found" << endl;
+                return 1;
+            }
+            else {
+                //cout << "Rehashing..." << endl;
+                index = (index + 1) % size;
+            }
+        } while (table[index] != NULL && index != initIndex);
+        cout << d << " not found" << endl;
+        return 0;
+    }
+    
+    void deleteMin() { //heap
+        cout << "Minimum key " << "i" << " deleted" << endl;
+    }
+    
+    int deleteKey(int d) { //table
+        int index = (d % size);
+        int initIndex = index;
+        //cout << "Looking in index = " << index << endl;
+        if (table[index] == NULL) {
+            cout << d << " not found" << endl;
+            return 0;
+        }
+        
+        do {
+            //cout << "In lookup do-while loop." << endl;
+            if(table[index]->getData() == d && table[index]->isDeleted() == 0) {
+                table[index]->setDelete(1);
+                cout << d << " deleted" << endl;
+                return 1;
+            }
+            else {
+                //cout << "Rehashing..." << endl;
+                index = (index + 1) % size;
+            }
+        } while (table[index] != NULL && index != initIndex);
+        cout << d << " not found" << endl;
+        return 0;
+    }
+    
+    void print() const {
+        for (int i=0; i<size; i++) {
+            if (table[i] != NULL && table[i]->isDeleted() == 0) {
+                cout << table[i]->getData() << " ";
+            }
+        }
+        cout << endl;
+    }
+};
+*/
+ 
 #endif

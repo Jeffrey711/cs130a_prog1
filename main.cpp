@@ -19,9 +19,9 @@ int main(int argc, char *argv[]) {
     }
     */
     
-    int tableSize = 0, keys = 0;
+    int size = 0, keys = 0;
     
-    cin >> tableSize;
+    cin >> size;
     cin >> keys;
     
     /*
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     cout << "nKeys = " << keys << endl;
     */
     
-    LinkedList *table = new LinkedList(tableSize);
+    HashTable *table = new HashTable(size);
     
     
     int sel = 0, i = 0;
@@ -60,5 +60,6 @@ int main(int argc, char *argv[]) {
             cin >> sel;
         }
     }
+    free(table);
     return 0;
 }
