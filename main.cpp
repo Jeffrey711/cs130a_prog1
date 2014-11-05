@@ -7,59 +7,65 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-    /*
-    FILE *file;
-    if(argc != 3) {
-        cout << "usage: ./prog1 < input.txt > output.txt" << endl;
-        exit(1);
-    }
-    if((file=fopen(argv[1],"r"))==NULL) {
-        printf("Could not open file %s\n",argv[1]);
-        exit(1);
-    }
-    */
-    
     int size = 0, keys = 0;
     
-    cin >> size;
-    cin >> keys;
+    //Read from input1.txt
+    if (argc == 2) {
+        FILE *file;
+        file = fopen(argv[1],"r");
+        cin >> size;
+        cin >> keys;
+    }
+    else {
+        cin >> size;
+        cin >> keys;
+    }
     
     /*
     cout << "Table Size = " << tableSize << endl;
     cout << "nKeys = " << keys << endl;
     */
     
-    HashTable *table = new HashTable(size);
     
+    HashTable *table = new HashTable(size); //Initialize hash table.
+    MinHeap *heap = new MinHeap(size); //Initialize min-heap.
     
+    //Parse!
     int sel = 0, i = 0;
     cin >> sel;
     while (sel != 5) {
         i = 0;
-        if (sel == 0) {
+        if (sel == 0) { //insert(i)
             cin >> i;
             table->insert(i);
+            heap->insert(i);
             cin >> sel;
         }
-        else if (sel == 1) {
+        else if (sel == 1) { //lookup(i)
             cin >> i;
             table->lookup(i);
+            heap->lookup(i);
             cin >> sel;
         }
-        else if (sel == 2) {
+        else if (sel == 2) { //deleteMin()
+            heap->deleteMin();
             table->deleteMin();
             cin >> sel;
         }
-        else if (sel == 3) {
+        else if (sel == 3) { //delete()
             cin >> i;
             table->deleteKey(i);
+            heap->deleteKey(i);
             cin >> sel;
         }
-        else if (sel == 4) {
-            table->print();
+        else if (sel == 4) { //print()
+            //table->print();
+            heap->print();
             cin >> sel;
         }
     }
+    //Deallocate memory
     free(table);
+    free(heap);
     return 0;
 }
