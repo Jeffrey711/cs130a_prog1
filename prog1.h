@@ -64,6 +64,7 @@ class HashTable {
     int size;
     
   public:
+    //Hash Table Constructor
     HashTable(int size) {
         this->size = size;
         table = new Node*[size];
@@ -71,68 +72,71 @@ class HashTable {
             table[i] = NULL;
     }
     
-    int insert(int d) { //table
+    int insert(int d) { //Table is faster
         int index =0;
-        if (d < 0) {
+        if (d < 0) { //If d is negative, hash using abs value.
             int pos = d * -1;
             index = (pos % size);
         }
         else {
             index = (d % size);
         }
-        int initIndex = index;
+        int initIndex = index; //Set initial index
     
         do {
-            //cout << "Entered insert while loop." << endl;
+            //If node is NULL, create new node.
             if (table[index] == NULL) {
                 table[index] = new Node(d);
                 cout << d << " inserted" << endl;
                 return 1;
             }
+            //If node is deleted, undelete and set value d.
             else if (table[index]->isDeleted()==1) {
                 table[index]->setDelete(0);
                 table[index]->setData(d);
                 cout << d << " inserted" << endl;
                 return 1;
             }
+            //If node has value d and is not deleted, then already present.
             else if (table[index]->getData() == d && table[index]->isDeleted() == 0) {
                 table[index]->setDelete(0);
                 cout << d << " already present" << endl;
                 return 1;
             }
+            //If node has value d, but was previously deleted, undelete.
             else if (table[index]->getData() == d && table[index]->isDeleted() == 1) {
                 table[index]->setDelete(0);
                 cout << d << " inserted" << endl;
                 return 1;
             }
+            //Rehash
             else
                 index = (index + 1) % size;
-                
-        } while (initIndex != index);
+        } while (initIndex != index); //Rehash until initial index is reached.
         cout << "Error: Could not insert " << d << endl;
         return 0;
     }
     
-    int lookup(int d) const { //
-        //cout << "Looking up..." << endl;
+    int lookup(int d) const { //Table is faster
         int index = (d % size);
         int initIndex = index;
-        //cout << "Looking in index = " << index << endl;
         
         do {
-            //cout << "In lookup do-while loop." << endl;
+            //If node is NULL, then key d is not in table.
             if (table[index] == NULL) {
                 cout << d << " not found" << endl;
                 return 0;
             }
+            //If node has value d and is not deleted, then found.
             else if(table[index]->getData() == d && table[index]->isDeleted() == 0) {
                 cout << d << " found" << endl;
                 return 1;
             }
+            //Rehash
             else {
-                //cout << "Rehashing..." << endl;
                 index = (index + 1) % size;
             }
+            //Rehash until node is NULL or initial index is reached.
         } while (table[index] != NULL && index != initIndex);
         cout << d << " not found" << endl;
         return 0;
@@ -142,13 +146,16 @@ class HashTable {
         int mIndex = -1;
         for (int i=0; i<size; i++) {
             if (table[i]!=NULL && table[i]->isDeleted()!=1) {
+                //Give mIndex an initial index
                 if (mIndex == -1)
                     mIndex = i;
+                //If current index value < mIndex value, set new mIndex.
                 else if (table[i]->getData() < table[mIndex]->getData()) {
                     mIndex = i;
                 }
             }
         }
+        //Do not print anything if table is empty.
         if (mIndex == -1) {
             return 0;
         }
@@ -159,17 +166,16 @@ class HashTable {
         }
     }
     
-    int deleteKey(int d) { //table
+    int deleteKey(int d) { //Table is faster
         int index = (d % size);
         int initIndex = index;
-        //cout << "Looking in index = " << index << endl;
         if (table[index] == NULL) {
             cout << d << " not found" << endl;
             return 0;
         }
         
         do {
-            //cout << "In lookup do-while loop." << endl;
+            //If node has value d and is not deleted, delete.
             if(table[index]->getData() == d && table[index]->isDeleted() == 0) {
                 table[index]->setDelete(1);
                 cout << d << " deleted" << endl;
@@ -228,6 +234,7 @@ public:
                 //cout << d << " inserted" << endl;
                 return 1;
             }
+            //If node is not NULL but was previously deleted
             else if (heap[i]!=NULL && heap[i]->isDeleted()==1) {
                 heap[i]->setData(d);
                 heap[i]->setDelete(0);
@@ -277,10 +284,12 @@ public:
     
     int lookup(int d) const {
         for (int i=0; i<size; i++) {
+            //Node has value d but was deleted, not found
             if (heap[i]!=NULL && heap[i]->isDeleted()==0 && heap[i]->getData()>d) {
                 //cout << d << " not found" << endl;
                 return 0;
             }
+            //Node has value d
             else if (heap[i] != NULL && heap[i]->isDeleted() == 0 && heap[i]->getData() == d) {
                 //cout << d << " found" << endl;
                 return 1;
@@ -294,6 +303,7 @@ public:
         if (heap[0] != NULL) {
             int minValue = heap[0]->getData();
             int i=0;
+            //Percolate
             for (i=0; heap[i+1]!=NULL && heap[i+1]->isDeleted()==0; i++) {
                 heap[i]->setData(heap[i+1]->getData()); //Shift all nodes towards root.
             }
@@ -306,32 +316,16 @@ public:
     }
     
     int deleteKey(int d) { //table
-        //If key is at root, run deleteMin()
-        /*if (heap[0]!=NULL && heap[0]->getData()==d) {
-            int i=0;
-            for (i=0; heap[i+1]!=NULL && heap[i+1]->isDeleted()==0; i++) {
-                heap[i]->setData(heap[i+1]->getData());
-                heap[i]->setDelete(0);
-            }
-            heap[i]->setDelete(1);
-            cout << d << " deleted" << endl;
-            return 1;
-        }*/
         for (int i=0; i<size; i++) {
-            //If heap[i] > key
-            //cout << "For loop: " << i << endl;
+            //If node is not deleted but has value greater than d, then d not found.
             if (heap[i]!=NULL && heap[i]->isDeleted()==0 && heap[i]->getData()>d) {
                 //cout << d << " not found" << endl;
                 return 0;
             }
             //If heap[i] = key
             else if (heap[i]!=NULL && heap[i]->isDeleted()==0 && heap[i]->getData()==d) {
-                int j=i;
-                //cout << "key found in index " << i << endl;
-                for (j=i; heap[j]!=NULL || heap[j]->isDeleted()==0; j++) {
-                    //cout << "Shifting index " << j << endl;
+                int j=i;                for (j=i; heap[j]!=NULL || heap[j]->isDeleted()==0; j++) {
                     if (heap[j+1] == NULL || heap[j+1]->isDeleted()==1) {
-                        //cout << "Next node is NULL." << endl;
                         heap[j]->setDelete(1);
                         break;
                     }
@@ -339,7 +333,6 @@ public:
                         heap[j]->setData(heap[j+1]->getData());
                     }
                 }
-                //cout << "Shifting done." << endl;
                 heap[j]->setDelete(1);
                 //cout << d << " deleted" << endl;
                 return 1;
