@@ -73,7 +73,11 @@ class HashTable {
     }
     
     int insert(int d) { //Table is faster
-        int index =0;
+    	if (this->lookupNoPrint(d)==1) {
+    		cout << d << " already present" << endl;
+    		return 1;
+    	}
+        int index = 0;
         if (d < 0) { //If d is negative, hash using abs value.
             int pos = d * -1;
             index = (pos % size);
@@ -98,17 +102,17 @@ class HashTable {
                 return 1;
             }
             //If node has value d and is not deleted, then already present.
-            else if (table[index]->getData() == d && table[index]->isDeleted() == 0) {
+            else if (table[index]->isDeleted() == 0 && table[index]->getData() == d) {
                 table[index]->setDelete(0);
                 cout << d << " already present" << endl;
                 return 1;
             }
             //If node has value d, but was previously deleted, undelete.
-            else if (table[index]->getData() == d && table[index]->isDeleted() == 1) {
+            /*else if (table[index]->getData() == d && table[index]->isDeleted() == 1) {
                 table[index]->setDelete(0);
                 cout << d << " inserted" << endl;
                 return 1;
-            }
+            }*/
             //Rehash
             else
                 index = (index + 1) % size;
@@ -118,8 +122,15 @@ class HashTable {
     }
     
     int lookup(int d) const { //Table is faster
-        int index = (d % size);
-        int initIndex = index;
+        int index = 0;
+        if (d < 0) { //If d is negative, hash using abs value.
+            int pos = d * -1;
+            index = (pos % size);
+        }
+        else {
+            index = (d % size);
+        }
+        int initIndex = index; //Set initial index
         
         do {
             //If node is NULL, then key d is not in table.
@@ -139,6 +150,35 @@ class HashTable {
             //Rehash until node is NULL or initial index is reached.
         } while (table[index] != NULL && index != initIndex);
         cout << d << " not found" << endl;
+        return 0;
+    }
+
+    int lookupNoPrint(int d) const { //Table is faster
+        int index = 0;
+        if (d < 0) { //If d is negative, hash using abs value.
+            int pos = d * -1;
+            index = (pos % size);
+        }
+        else {
+            index = (d % size);
+        }
+        int initIndex = index; //Set initial index
+        
+        do {
+            //If node is NULL, then key d is not in table.
+            if (table[index] == NULL) {
+                return 0;
+            }
+            //If node has value d and is not deleted, then found.
+            else if(table[index]->getData() == d && table[index]->isDeleted() == 0) {
+                return 1;
+            }
+            //Rehash
+            else {
+                index = (index + 1) % size;
+            }
+            //Rehash until node is NULL or initial index is reached.
+        } while (table[index] != NULL && index != initIndex);
         return 0;
     }
     
@@ -167,8 +207,16 @@ class HashTable {
     }
     
     int deleteKey(int d) { //Table is faster
-        int index = (d % size);
+        int index = 0;
+        if (d < 0) { //If d is negative, hash using abs value.
+            int pos = d * -1;
+            index = (pos % size);
+        }
+        else {
+            index = (d % size);
+        }
         int initIndex = index;
+        
         if (table[index] == NULL) {
             cout << d << " not found" << endl;
             return 0;
