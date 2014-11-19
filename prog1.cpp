@@ -7,9 +7,9 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-    int size = 0, keys = 0;
+    int size = 0, commands = 0;
     cin >> size;
-    cin >> keys;
+    cin >> commands;
     
     HashTable *table = new HashTable(size); //Initialize hash table.
     MinHeap *heap = new MinHeap(size); //Initialize min-heap.
@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     int sel = 0, i = 0, count=0;
     cin >> sel;
     
-    while (count < keys && sel != 5) {
+    while (count < commands && sel != 5) {
         i = 0;
         if (sel == 0) { //insert(i)
             cin >> i;
