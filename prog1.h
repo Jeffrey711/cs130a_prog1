@@ -372,7 +372,8 @@ public:
             }
             //If heap[i] = key
             else if (heap[i]!=NULL && heap[i]->isDeleted()==0 && heap[i]->getData()==d) {
-                int j=i;                for (j=i; heap[j]!=NULL || heap[j]->isDeleted()==0; j++) {
+                int j=i;                
+                for (j=i; heap[j]!=NULL || heap[j]->isDeleted()==0; j++) {
                     if (heap[j+1] == NULL || heap[j+1]->isDeleted()==1) {
                         heap[j]->setDelete(1);
                         break;

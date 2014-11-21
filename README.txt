@@ -13,3 +13,6 @@ To run:
 3) Type integer value for number of keys. *Enter when done.
 4) Give commands and key value as found in input.txt
 5) Give command “5” to exit program.
+
+Tests 4 and 8 segfault on personal computer.
+However, all tests pass on CSIL.
